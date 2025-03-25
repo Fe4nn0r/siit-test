@@ -1,43 +1,76 @@
 const express = require("express");
 const services = require("./services.json");
 const users = require("./users.json");
-const app = express();
-const Bundler = require("parcel-bundler");
-const bundler = new Bundler("src/index.html", { logLevel: 2 });
+const path = require("path");
+const Parcel = require("@parcel/core").default;
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
-const PORT = 3001;
+const PORT = 4001;
+const devPort = 4000;
 
-app.get('/services.json', (req, res) => {
-  res.json(services);
-});
+// Development Server Settings
+const frontEndDevServerOptions = {
+  defaultConfig: require.resolve("@parcel/config-default"),
+  entries: path.join(__dirname, "../src/index.html"),
+  serveOptions: {
+    port: devPort,
+  },
+  hmrOptions: {
+    port: devPort,
+  },
+};
 
-app.get('/users.json', (req, res) => {
-  let filteredUsers = users.map((user, i) => {
-    const id = i + 1;
-    return { id, avatar_url: `https://eu.ui-avatars.com/api/?name=${user.name}`, ...user };
+function initFrontend() {
+  const frontendDevServer = new Parcel(frontEndDevServerOptions);
+  return frontendDevServer.watch().catch((err) => console.error(err));
+}
+
+initFrontend().then((r) => {
+  const app = express();
+
+  app.get("/services.json", (req, res) => {
+    res.json(services);
   });
 
-  if (req.query.service_id) {
-    filteredUsers = filteredUsers.filter((u) => u.service_ids.includes(parseInt(req.query.service_id)));
-  }
+  app.get("/users.json", (req, res) => {
+    let filteredUsers = users.map((user, i) => {
+      const id = i + 1;
+      return {
+        id,
+        avatar_url: `https://eu.ui-avatars.com/api/?name=${user.name}`,
+        ...user,
+      };
+    });
 
-  res.json(filteredUsers);
-})
+    if (req.query.service_id) {
+      filteredUsers = filteredUsers.filter((u) =>
+        u.service_ids.includes(parseInt(req.query.service_id))
+      );
+    }
 
-app.use(express.static("server/public"));
-app.use(bundler.middleware());
+    res.json(filteredUsers);
+  });
 
-app.listen(PORT, () => {
-  // Clear console
-  process.stdout.write(
-    process.platform === "win32" ? "\x1B[2J\x1B[0f" : "\x1B[2J\x1B[3J\x1B[H"
+  app.use(express.static("server/public"));
+
+  const parcelMiddleware = createProxyMiddleware({
+    target: `http://localhost:${devPort}/`,
+    changeOrigin: true,
+  });
+  app.use("/", parcelMiddleware);
+
+  app.listen(PORT, () => {
+    // Clear console
+    process.stdout.write(
+      process.platform === "win32" ? "\x1B[2J\x1B[0f" : "\x1B[2J\x1B[3J\x1B[H"
     );
 
-  console.log("\x1b[32m%s\x1b[0m", "App started successfully!");
-  console.log();
-  console.log("You can now view it in your browser.");
-  console.log();
-  console.log(`  http://localhost:${PORT}`);
-  console.log();
-  console.log("You'll find more instruction in the README file.");
+    console.log("\x1b[32m%s\x1b[0m", "App started successfully!");
+    console.log();
+    console.log("You can now view it in your browser.");
+    console.log();
+    console.log(`  http://localhost:${PORT}`);
+    console.log();
+    console.log("You'll find more instruction in the README file.");
+  });
 });
