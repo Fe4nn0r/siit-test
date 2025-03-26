@@ -1,12 +1,23 @@
+import { formatPrice } from "../../../utils.price";
+import type { User } from "../../users/types/user";
+import { useServiceCost } from "../hooks/useServiceCost";
 import type { Service } from "../types/service";
 
 type Props = {
 	service: Service;
 	onServiceClick: (_service: Service) => void;
 	isSelected: boolean;
+	users?: User[];
 };
 
-export const ServiceCard = ({ service, onServiceClick, isSelected }: Props) => {
+export const ServiceCard = ({
+	service,
+	onServiceClick,
+	isSelected,
+	users,
+}: Props) => {
+	const { monthlyCost, usersCount } = useServiceCost(service, users);
+
 	return (
 		<button
 			className={`bg-white rounded-lg shadow-md p-4 flex flex-col cursor-pointer transition-all hover:shadow-lg ${
@@ -36,6 +47,25 @@ export const ServiceCard = ({ service, onServiceClick, isSelected }: Props) => {
 				>
 					Link
 				</a>
+			</div>
+			<div className="mt-auto space-y-2 pt-4 border-t border-gray-100">
+				<div className="flex items-center justify-between text-sm text-gray-600">
+					<span>Users:</span>
+					<span className="font-medium">
+						{usersCount} / {service.price.nb_users_included} included
+					</span>
+				</div>
+				<div className="flex items-center justify-between">
+					<div className="flex items-center gap-1 text-sm text-gray-600">
+						<span>Monthly Cost:</span>
+					</div>
+					<span className="font-semibold text-green-600">
+						{formatPrice(monthlyCost)}
+					</span>
+				</div>
+				<div className="text-xs text-gray-500 italic">
+					Additional user cost: {formatPrice(service.price.cost_per_user)}/user
+				</div>
 			</div>
 		</button>
 	);

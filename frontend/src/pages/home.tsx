@@ -57,6 +57,7 @@ export const HomePage = () => {
 					isError={hasErroredLoadingServices}
 					onServiceClick={handleServiceClick}
 					selectedService={selectedService}
+					users={users}
 				/>
 			</section>
 		</main>

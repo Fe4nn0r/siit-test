@@ -20,7 +20,13 @@ const mockServices: Service[] = [
 describe("ServiceList", () => {
 	it("renders service information when services are provided", () => {
 		render(
-			<ServiceList services={mockServices} isLoading={false} isError={false} />,
+			<ServiceList
+				services={mockServices}
+				isLoading={false}
+				isError={false}
+				users={[]}
+				onServiceClick={() => {}}
+			/>,
 		);
 
 		for (const service of mockServices) {
