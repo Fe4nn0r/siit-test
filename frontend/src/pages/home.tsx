@@ -1,19 +1,31 @@
+import { useState } from "react";
 import { ServiceList } from "../features/services/components/ServiceList";
 import { useServices } from "../features/services/hooks/useServices";
+import type { Service } from "../features/services/types/service";
 import { UserList } from "../features/users/components/UserList";
 import { useUsers } from "../features/users/hooks/useUsers";
 
 export const HomePage = () => {
+	const [selectedService, setSelectedService] = useState<Service>();
+
 	const {
 		data: users,
 		isLoading: isLoadingUsers,
 		isError: hasErroredLoadingUsers,
-	} = useUsers();
+	} = useUsers({ service: selectedService });
 	const {
 		data: services,
 		isLoading: isLoadingServices,
 		isError: hasErroredLoadingServices,
 	} = useServices();
+
+	const handleServiceClick = (service: Service) => {
+		if (selectedService === service) {
+			setSelectedService(undefined);
+		} else {
+			setSelectedService(service);
+		}
+	};
 
 	return (
 		<main className="flex-1 container py-8 px-4 md:px-8 max-w-7xl mx-auto">
@@ -21,9 +33,7 @@ export const HomePage = () => {
 				<h3 id="users-heading" className="text-lg font-medium mb-4">
 					Users
 					{users && (
-						<span className="ml-2 text-sm font-normal">
-							({users.length} user{users.length !== 1 ? "s" : ""})
-						</span>
+						<span className="ml-2 text-sm font-normal">({users.length})</span>
 					)}
 				</h3>
 				<UserList
@@ -37,7 +47,7 @@ export const HomePage = () => {
 					Services
 					{services && (
 						<span className="ml-2 text-sm font-normal">
-							({services.length} service{services.length !== 1 ? "s" : ""})
+							({services.length})
 						</span>
 					)}
 				</h3>
@@ -45,6 +55,8 @@ export const HomePage = () => {
 					services={services}
 					isLoading={isLoadingServices}
 					isError={hasErroredLoadingServices}
+					onServiceClick={handleServiceClick}
+					selectedService={selectedService}
 				/>
 			</section>
 		</main>

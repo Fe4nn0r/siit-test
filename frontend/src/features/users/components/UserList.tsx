@@ -1,4 +1,5 @@
 import { ErrorMessage } from "../../../components/ErrorMessage";
+import { NoResults } from "../../../components/NoResults";
 import type { User } from "../types/user";
 import { UserCard } from "./UserCard";
 
@@ -25,6 +26,10 @@ export const UserList = ({ users, isLoading, isError }: Props) => {
 				))}
 			</div>
 		);
+	}
+
+	if (users?.length === 0) {
+		return <NoResults>No employees found</NoResults>;
 	}
 
 	return (

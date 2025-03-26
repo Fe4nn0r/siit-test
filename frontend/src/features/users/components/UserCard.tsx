@@ -6,7 +6,7 @@ type Props = {
 
 export const UserCard = ({ user }: Props) => {
 	return (
-		<div className="rounded-xl overflow-hidden transition-all duration-300 animate-fade-in-up">
+		<div className="bg-white rounded-lg shadow-md p-4 flex flex-col transition-all hover:shadow-lg">
 			<div className="flex items-center p-4">
 				<div className="flex-shrink-0">
 					<div className="relative w-12 h-12 rounded-full overflow-hidden">

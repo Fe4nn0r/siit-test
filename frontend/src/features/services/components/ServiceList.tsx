@@ -1,4 +1,5 @@
 import { ErrorMessage } from "../../../components/ErrorMessage";
+import { NoResults } from "../../../components/NoResults";
 import type { Service } from "../types/service";
 import { ServiceCard } from "./ServiceCard";
 
@@ -6,9 +7,17 @@ type Props = {
 	isError: boolean;
 	isLoading: boolean;
 	services?: Service[];
+	onServiceClick: (_service: Service) => void;
+	selectedService?: Service;
 };
 
-export const ServiceList = ({ services, isLoading, isError }: Props) => {
+export const ServiceList = ({
+	services,
+	isLoading,
+	isError,
+	onServiceClick,
+	selectedService,
+}: Props) => {
 	if (isError) {
 		return <ErrorMessage>Failed to load services</ErrorMessage>;
 	}
@@ -27,11 +36,20 @@ export const ServiceList = ({ services, isLoading, isError }: Props) => {
 		);
 	}
 
+	if (services?.length === 0) {
+		return <NoResults>No employees found</NoResults>;
+	}
+
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			{isError && <ErrorMessage>Failed to load services</ErrorMessage>}
 			{services?.map((service) => (
-				<ServiceCard key={service.id} service={service} />
+				<ServiceCard
+					key={service.id}
+					service={service}
+					onServiceClick={onServiceClick}
+					isSelected={selectedService === service}
+				/>
 			))}
 		</div>
 	);
