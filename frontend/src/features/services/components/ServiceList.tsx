@@ -1,16 +1,16 @@
 import { ErrorMessage } from "../../../components/ErrorMessage";
-import type { User } from "../types/user";
-import { UserCard } from "./UserCard";
+import type { Service } from "../types/service";
+import { ServiceCard } from "./ServiceCard";
 
 type Props = {
 	isError: boolean;
 	isLoading: boolean;
-	users?: User[];
+	services?: Service[];
 };
 
-export const UserList = ({ users, isLoading, isError }: Props) => {
+export const ServiceList = ({ services, isLoading, isError }: Props) => {
 	if (isError) {
-		return <ErrorMessage>Failed to load users</ErrorMessage>;
+		return <ErrorMessage>Failed to load services</ErrorMessage>;
 	}
 
 	if (isLoading) {
@@ -29,8 +29,9 @@ export const UserList = ({ users, isLoading, isError }: Props) => {
 
 	return (
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-			{users?.map((user) => (
-				<UserCard key={user.id} user={user} />
+			{isError && <ErrorMessage>Failed to load services</ErrorMessage>}
+			{services?.map((service) => (
+				<ServiceCard key={service.id} service={service} />
 			))}
 		</div>
 	);
