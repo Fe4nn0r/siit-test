@@ -1,5 +1,6 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { renderWithClient } from "../../../../test/utils";
 import type { Service } from "../../types/service";
 import { ServiceList } from "../ServiceList";
 
@@ -18,13 +19,12 @@ const mockServices: Service[] = [
 ];
 
 describe("ServiceList", () => {
-	it("renders service information when services are provided", () => {
-		render(
+	it("renders each service", () => {
+		renderWithClient(
 			<ServiceList
 				services={mockServices}
 				isLoading={false}
 				isError={false}
-				users={[]}
 				onServiceClick={() => {}}
 			/>,
 		);

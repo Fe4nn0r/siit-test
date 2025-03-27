@@ -9,9 +9,21 @@ const fetchServices = async (): Promise<Service[]> => {
 	return response.json();
 };
 
-export const useServices = () => {
+export const useServices = ({ filterText }: { filterText: string }) => {
 	return useQuery<Service[], Error>({
 		queryKey: ["services"],
 		queryFn: fetchServices,
+		select: (services) => {
+			if (!filterText) {
+				return services;
+			}
+
+			const lowercaseFilter = filterText.toLowerCase();
+			return services.filter(
+				(service) =>
+					service.name.toLowerCase().includes(lowercaseFilter) ||
+					service.website_url.toLowerCase().includes(lowercaseFilter),
+			);
+		},
 	});
 };

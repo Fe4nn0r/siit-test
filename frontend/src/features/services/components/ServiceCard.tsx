@@ -1,7 +1,9 @@
-import { formatPrice } from "../../../utils.price";
+import { ExternalLinkIcon } from "../../../icons/ExternalLinkIcon";
+import { formatPrice } from "../../../utils/price";
 import type { User } from "../../users/types/user";
 import { useServiceCost } from "../hooks/useServiceCost";
 import type { Service } from "../types/service";
+import { ServiceLogo } from "./ServiceLogo";
 
 type Props = {
 	service: Service;
@@ -29,11 +31,7 @@ export const ServiceCard = ({
 		>
 			<div className="flex items-center justify-between mb-4">
 				<div className="flex items-center gap-4">
-					<img
-						src={service.logo_url}
-						alt=""
-						className="w-12 h-12 object-contain"
-					/>
+					<ServiceLogo sourceUri={service.logo_url} />
 					<h3 className="text-lg font-semibold text-gray-800">
 						{service.name}
 					</h3>
@@ -42,29 +40,35 @@ export const ServiceCard = ({
 					href={service.website_url}
 					target="_blank"
 					rel="noopener noreferrer"
-					className="text-blue-600 hover:text-blue-800 transition-colors"
+					className="flex items-center gap-1 text-blue-600 transition-colors hover:text-blue-800 hover:underline"
 					onClick={(event) => event.stopPropagation()}
 				>
-					Link
+					<ExternalLinkIcon width={16} height={16} />
+					Go to
 				</a>
 			</div>
 			<div className="mt-auto space-y-2 pt-4 border-t border-gray-100">
 				<div className="flex items-center justify-between text-sm text-gray-600">
 					<span>Users:</span>
-					<span className="font-medium">
-						{usersCount} / {service.price.nb_users_included} included
-					</span>
+
+					{service.price.nb_users_included > 0 ? (
+						<span className="font-medium">
+							{usersCount} / {service.price.nb_users_included} included
+						</span>
+					) : (
+						<span className="font-medium">{usersCount}</span>
+					)}
 				</div>
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-1 text-sm text-gray-600">
 						<span>Monthly Cost:</span>
 					</div>
-					<span className="font-semibold text-green-600">
+					<span className="font-semibold text-green-700">
 						{formatPrice(monthlyCost)}
 					</span>
 				</div>
-				<div className="text-xs text-gray-500 italic">
-					Additional user cost: {formatPrice(service.price.cost_per_user)}/user
+				<div className="text-left text-xs text-gray-500 italic">
+					{formatPrice(service.price.cost_per_user)}/ additional user
 				</div>
 			</div>
 		</button>

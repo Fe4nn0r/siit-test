@@ -22,7 +22,11 @@ const frontEndDevServerOptions = {
 
 function initFrontend() {
   const frontendDevServer = new Parcel(frontEndDevServerOptions);
-  return frontendDevServer.watch().catch((err) => console.error(err));
+  return frontendDevServer.watch((error) => {
+    if (error) {
+      console.log(error);
+    }
+  });
 }
 
 initFrontend().then((r) => {
@@ -56,6 +60,7 @@ initFrontend().then((r) => {
   const parcelMiddleware = createProxyMiddleware({
     target: `http://localhost:${devPort}/`,
     changeOrigin: true,
+    ws: true,
   });
   app.use("/", parcelMiddleware);
 

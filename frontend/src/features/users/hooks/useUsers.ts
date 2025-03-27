@@ -14,10 +14,28 @@ const fetchUsers = async (serviceId?: number): Promise<User[]> => {
 	return response.json();
 };
 
-export const useUsers = ({ service }: { service?: Service }) => {
+export const useUsers = ({
+	service,
+	filterText,
+}: {
+	service?: Service;
+	filterText: string;
+}) => {
 	const serviceId = service?.id;
 	return useQuery<User[], Error>({
 		queryKey: ["users", serviceId],
 		queryFn: () => fetchUsers(serviceId),
+		select: (users) => {
+			if (!filterText) {
+				return users;
+			}
+
+			const lowercaseFilter = filterText.toLowerCase();
+			return users.filter(
+				(user) =>
+					user.name.toLowerCase().includes(lowercaseFilter) ||
+					user.position.toLowerCase().includes(lowercaseFilter),
+			);
+		},
 	});
 };

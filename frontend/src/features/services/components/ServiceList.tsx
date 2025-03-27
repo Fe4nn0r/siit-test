@@ -1,5 +1,6 @@
 import { ErrorMessage } from "../../../components/ErrorMessage";
 import { NoResults } from "../../../components/NoResults";
+import { useUsers } from "../../users/hooks/useUsers";
 import type { User } from "../../users/types/user";
 import type { Service } from "../types/service";
 import { ServiceCard } from "./ServiceCard";
@@ -10,7 +11,6 @@ type Props = {
 	services?: Service[];
 	onServiceClick: (_service: Service) => void;
 	selectedService?: Service;
-	users?: User[];
 };
 
 export const ServiceList = ({
@@ -19,8 +19,9 @@ export const ServiceList = ({
 	isError,
 	onServiceClick,
 	selectedService,
-	users,
 }: Props) => {
+	const { data: unfilteredUsers } = useUsers({ filterText: "" });
+
 	if (isError) {
 		return <ErrorMessage>Failed to load services</ErrorMessage>;
 	}
@@ -40,7 +41,7 @@ export const ServiceList = ({
 	}
 
 	if (services?.length === 0) {
-		return <NoResults>No employees found</NoResults>;
+		return <NoResults>No services found</NoResults>;
 	}
 
 	return (
@@ -52,7 +53,7 @@ export const ServiceList = ({
 					service={service}
 					onServiceClick={onServiceClick}
 					isSelected={selectedService === service}
-					users={users}
+					users={unfilteredUsers}
 				/>
 			))}
 		</div>

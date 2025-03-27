@@ -19,8 +19,8 @@ export const UserCard = ({ user }: Props) => {
 					</div>
 				</div>
 				<div className="ml-4">
-					<h3 className="text-base font-medium">{user.name}</h3>
-					<p className="text-sm">{user.position}</p>
+					<h3 className="text-lg font-semibold text-gray-800">{user.name}</h3>
+					<p className="text-gray-600">{user.position}</p>
 				</div>
 			</div>
 		</div>
